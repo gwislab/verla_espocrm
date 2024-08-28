@@ -9,11 +9,11 @@ services:
     volumes:
       - ./data:/var/www/html  # Optional: To persist data
     environment:
-      - ESPOCRM_DATABASE_HOST=db
-      - ESPOCRM_DATABASE_PORT=3306
-      - ESPOCRM_DATABASE_NAME=espocrm
-      - ESPOCRM_DATABASE_USER=espocrm
-      - ESPOCRM_DATABASE_PASSWORD=espocrm
+      - ESPOCRM_DATABASE_HOST=${ESPOCRM_DATABASE_HOST}
+      - ESPOCRM_DATABASE_PORT=${ESPOCRM_DATABASE_PORT}
+      - ESPOCRM_DATABASE_NAME=${ESPOCRM_DATABASE_NAME}
+      - ESPOCRM_DATABASE_USER=${ESPOCRM_DATABASE_USER}
+      - ESPOCRM_DATABASE_PASSWORD=${ESPOCRM_DATABASE_PASSWORD}
     depends_on:
       - db
 
@@ -21,9 +21,9 @@ services:
     image: mariadb:10.5
     container_name: espocrm_db
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=espocrm
-      - MYSQL_USER=espocrm
-      - MYSQL_PASSWORD=espocrm
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - ./db:/var/lib/mysql
