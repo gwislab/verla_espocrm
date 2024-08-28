@@ -1,27 +1,65 @@
 services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql:/var/lib/mysql
+    restart: always
+
   espocrm:
     image: espocrm/espocrm
     container_name: espocrm
+    environment:
+      ESPOCRM_DATABASE_PLATFORM: ${ESPOCRM_DATABASE_PLATFORM}
+      ESPOCRM_DATABASE_HOST: ${ESPOCRM_DATABASE_HOST}
+      ESPOCRM_DATABASE_USER: ${ESPOCRM_DATABASE_USER}
+      ESPOCRM_DATABASE_PASSWORD: ${ESPOCRM_DATABASE_PASSWORD}
+      ESPOCRM_ADMIN_USERNAME: ${ESPOCRM_ADMIN_USERNAME}
+      ESPOCRM_ADMIN_PASSWORD: ${ESPOCRM_ADMIN_PASSWORD}
+      ESPOCRM_SITE_URL: ${ESPOCRM_SITE_URL}
+    volumes:
+      - espocrm:/var/www/html
+    restart: always
     ports:
-      - "8080:80"  # Map port 8080 on your machine to port 80 in the container
-    volumes:
-      - ./data:/var/www/html  # Optional: To persist data
-    environment:
-      - ESPOCRM_DATABASE_HOST=${ESPOCRM_DATABASE_HOST}
-      - ESPOCRM_DATABASE_PORT=${ESPOCRM_DATABASE_PORT}
-      - ESPOCRM_DATABASE_NAME=${ESPOCRM_DATABASE_NAME}
-      - ESPOCRM_DATABASE_USER=${ESPOCRM_DATABASE_USER}
-      - ESPOCRM_DATABASE_PASSWORD=${ESPOCRM_DATABASE_PASSWORD}
+      - 8080:80
     depends_on:
-      - db
+      - mysql
 
-  db:
-    image: mariadb:10.5
-    container_name: espocrm_db
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  espocrm-daemon:
+    image: espocrm/espocrm
+    container_name: espocrm-daemon
     volumes:
-      - ./db:/var/lib/mysql
+      - espocrm:/var/www/html
+    restart: always
+    entrypoint: docker-daemon.sh
+    depends_on:
+      - espocrm
+      - mysql
+
+  espocrm-websocket:
+    image: espocrm/espocrm
+    container_name: espocrm-websocket
+    environment:
+      ESPOCRM_CONFIG_USE_WEB_SOCKET: ${ESPOCRM_CONFIG_USE_WEB_SOCKET}
+      ESPOCRM_CONFIG_WEB_SOCKET_URL: ${ESPOCRM_CONFIG_WEB_SOCKET_URL}
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN: ${ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBSCRIBER_DSN}
+      ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN: ${ESPOCRM_CONFIG_WEB_SOCKET_ZERO_M_Q_SUBMISSION_DSN}
+    volumes:
+      - espocrm:/var/www/html
+    restart: always
+    entrypoint: docker-websocket.sh
+    ports:
+      - 8081:8080
+    depends_on:
+      - espocrm
+      - mysql
+
+volumes:
+  mysql:
+  espocrm:
