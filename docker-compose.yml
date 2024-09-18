@@ -3,20 +3,20 @@ networks:
     driver: bridge
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    env_file: .env
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - ./mysql:/var/lib/mysql:delegated  # Local directory for MySQL data
-    restart: always
-    networks:
-      - internal  # Add this line to connect MySQL to the internal network
+  # mysql:
+  #   image: mysql:8
+  #   container_name: mysql
+  #   env_file: .env
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #   volumes:
+  #     - ./mysql:/var/lib/mysql:delegated  # Local directory for MySQL data
+  #   restart: always
+  #   networks:
+  #     - internal  # Add this line to connect MySQL to the internal network
 
   espocrm:
     image: espocrm/espocrm
@@ -37,8 +37,8 @@ services:
       - 8086:80  # Change host port to 8086
     networks:
       - internal
-    depends_on:
-      - mysql
+    # depends_on:
+    #   - mysql
 
   espocrm-daemon:
     image: espocrm/espocrm
@@ -52,7 +52,7 @@ services:
       - internal
     depends_on:
       - espocrm
-      - mysql
+      # - mysql
 
   espocrm-websocket:
     image: espocrm/espocrm
@@ -73,10 +73,10 @@ services:
       - 8081:8086
     depends_on:
       - espocrm
-      - mysql
+      # - mysql
 
 volumes:
-  mysql:
-    driver: local
+  # mysql:
+  #   driver: local
   espocrm:
     driver: local
