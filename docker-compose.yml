@@ -18,7 +18,7 @@ services:
   #   networks:
   #     - internal  # Add this line to connect MySQL to the internal network
 
-  espocrm:
+  verla_espocrm:
     image: espocrm/espocrm
     container_name: espocrm
     env_file: .env
@@ -41,7 +41,7 @@ services:
     # depends_on:
     #   - mysql
 
-  espocrm-daemon:
+  verla_espocrm_daemon:
     image: espocrm/espocrm
     container_name: espocrm-daemon
     env_file: .env
@@ -52,10 +52,10 @@ services:
     networks:
       - internal
     depends_on:
-      - espocrm
+      - verla_espocrm
       # - mysql
 
-  espocrm-websocket:
+  verla_espocrm_websocket:
     image: espocrm/espocrm
     container_name: espocrm-websocket
     env_file: .env
@@ -73,11 +73,11 @@ services:
     ports:
       - 8081:8086
     depends_on:
-      - espocrm
+      - verla_espocrm
       # - mysql
 
 volumes:
   # mysql:
   #   driver: local
-  espocrm:
+  verla_espocrm:
     driver: local
