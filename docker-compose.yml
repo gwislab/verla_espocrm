@@ -27,7 +27,7 @@ services:
       - espocrm:/var/www/html
     restart: always
     ports:
-      - 8080:80
+      - 8086:80  # Change host port to 8086
     depends_on:
       - mysql
 
@@ -55,7 +55,7 @@ services:
     restart: always
     entrypoint: docker-websocket.sh
     ports:
-      - 8081:8080
+      - 8081:8086
     depends_on:
       - espocrm
       - mysql
