@@ -15,6 +15,8 @@ services:
     volumes:
       - ./mysql:/var/lib/mysql:delegated  # Local directory for MySQL data
     restart: always
+    networks:
+      - internal  # Add this line to connect MySQL to the internal network
 
   espocrm:
     image: espocrm/espocrm
@@ -73,7 +75,6 @@ services:
       - espocrm
       - mysql
 
-# Use bind mounts for local storage
 volumes:
   mysql:
     driver: local
